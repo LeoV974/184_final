@@ -31,7 +31,95 @@ Cloth::~Cloth() {
 }
 
 void Cloth::buildGrid() {
-  // TODO (Part 1): Build a grid of masses and springs.
+    // TODO (Part 1): Build a grid of masses and springs.
+    double xh = width / ((double) num_width_points - 1.0);
+    double yh = height / ((double) num_height_points - 1.0);
+
+    // grid of point masses in row-major order
+    for (int i = 0; i < num_height_points; ++i) {
+        for (int j = 0; j < num_width_points; ++j) {
+            Vector3D pos;
+            if (orientation == HORIZONTAL) {
+                pos.y = 1.0;
+                // vary over xz plane
+                pos.x = j* xh;
+                pos.z = i* yh;
+            }
+            //orientation vertical
+            else {
+                pos.x = j * xh;
+                pos.y = i * yh;
+                // set z to small random value
+                // (-1,1) offset
+                float offset = ((float)rand() / RAND_MAX * 2.0 - 1.0);
+                pos.z = offset / 1000.0;
+            }
+            point_masses.emplace_back(pos, false);
+        }
+    }
+
+    // deal with pinned pms
+    // loop over pinned indices and then update boolean
+    int x, y;
+    for (int i = 0; i < pinned.size(); ++i) {
+        x = pinned[i][0];
+        y = pinned[i][1];
+        PointMass* pm = &point_masses[num_width_points * x + y];
+        pm->pinned = true;
+    }
+
+    // create springs to apply the structual, shear, and bending constraints
+
+    
+    for (int i = 0; i < num_height_points; ++i) {
+        for (int j = 0; j < num_width_points; ++j) {
+            int curridx = i * num_width_points + j;
+            // structural (exist between a point mass and the point mass to its left as well as the point mass above it)
+            // top left corner is (0,0) so skip
+            // if we are not at the top most row then add a link to the point above it
+            if (i > 0) {
+                springs.emplace_back(&point_masses[curridx],
+                    &point_masses[(i - 1)*num_width_points +  j],
+                    STRUCTURAL);
+            }
+            // if we are not at the left most column then add a link to the point left of it
+            if (j > 0) {
+                springs.emplace_back(&point_masses[curridx],
+                    &point_masses[i*num_width_points + (j - 1)],
+                    STRUCTURAL);
+            }
+
+            // shearing (exist between a point mass and the point mass to its diagonal upper left as well as the point mass to its diagonal upper right)
+            // diagonal upper left
+            if (i > 0 && j > 0) {
+                springs.emplace_back(&point_masses[curridx],
+                    &point_masses[(i - 1) * num_width_points + (j - 1)],
+                    SHEARING);
+            }
+            // diagonal upper right
+            if (i > 0 && j < (num_width_points - 1)) {
+                springs.emplace_back(&point_masses[curridx],
+                    &point_masses[(i - 1) * num_width_points + (j + 1)],
+                    SHEARING);
+            }
+
+            // bending (exist between a point mass and the point mass two away to its left as well as the point mass two above it)
+            // two above
+            if (i > 1) {
+                springs.emplace_back(&point_masses[curridx],
+                    &point_masses[(i - 2) * num_width_points + j],
+                    BENDING);
+            }
+            // two to the left
+            if (j > 1) {
+                springs.emplace_back(&point_masses[curridx],
+                    &point_masses[i * num_width_points + (j - 2)],
+                    BENDING);
+            }
+        }
+    }
+
+
 
 }
 
