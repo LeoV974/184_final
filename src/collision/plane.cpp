@@ -12,7 +12,11 @@ using namespace CGL;
 
 void Plane::collide(PointMass &pm) {
   // TODO (Part 3): Handle collisions with planes.
-
+    //(p - p_plane) dot n = 0 is plane eq
+    double plane = dot(pm.position - this->point, this->normal);
+    if (plane < 0) {
+       
+    }
 }
 
 void Plane::render(GLShader &shader) {
