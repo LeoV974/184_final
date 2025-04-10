@@ -15,7 +15,10 @@ void Plane::collide(PointMass &pm) {
     //(p - p_plane) dot n = 0 is plane eq
     double plane = dot(pm.position - this->point, this->normal);
     if (plane < 0) {
-       
+        // plane returned how far below so we need to add -plane*normal to intersect the plane
+        Vector3D tang = pm.position + this->normal * (-plane + SURFACE_OFFSET);
+        Vector3D corr = tang - pm.last_position;
+        pm.position = (1 - this->friction) * corr + pm.last_position;
     }
 }
 

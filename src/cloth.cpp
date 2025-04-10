@@ -175,13 +175,17 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
   
 
   // TODO (Part 4): Handle self-collisions.
-
+  build_spatial_map();
+  for (int j = 0; j < point_masses.size(); ++j) {
+      PointMass* pm = &point_masses[j];
+      self_collide(*pm, simulation_steps);
+  }
 
   // TODO (Part 3): Handle collisions with other primitives.
   for (int i = 0; i < (*collision_objects).size(); ++i) {
       CollisionObject* o = (*collision_objects)[i];
       for (int j = 0; j < point_masses.size(); ++j) {
-          PointMass* pm = &point_masses[i];
+          PointMass* pm = &point_masses[j];
           o->collide(*pm);
       }
   }
@@ -224,17 +228,49 @@ void Cloth::build_spatial_map() {
 
   // TODO (Part 4): Build a spatial map out of all of the point masses.
 
+  for (int j = 0; j < point_masses.size(); ++j) {
+      PointMass* pm = &point_masses[j];
+      float h = hash_position(pm->position);
+      if (map.find(h) == map.end()) {
+          map[h] = new vector <PointMass*>();
+      }
+      map[h]->push_back(pm);
+  }
+  
 }
 
 void Cloth::self_collide(PointMass &pm, double simulation_steps) {
   // TODO (Part 4): Handle self-collision for a given point mass.
-
+    float h = hash_position(pm.position);
+    Vector3D corr(0.0);
+    int count = 0;
+    for (PointMass* cand : *(map[h])) {
+        if (cand == &pm) continue;
+        Vector3D dir = pm.position - cand->position;
+        float dist = dir.norm();
+        if (dist < 2 * thickness && dist > 1e-7) {
+            double diff = 2 * thickness - dist;
+            dir.normalize();
+            corr += dir * diff;
+            count++;
+        }
+    }
+    if (count > 0) {
+        corr /= (count * simulation_steps);
+        pm.position += corr;
+    }
 }
 
 float Cloth::hash_position(Vector3D pos) {
   // TODO (Part 4): Hash a 3D position into a unique float identifier that represents membership in some 3D box volume.
-
-  return 0.f; 
+    float w = 3 * width / num_width_points;
+    float h = 3 * height / num_height_points;
+    float t = max(w, h);
+    int trux = floor(pos.x / w);
+    int truy = floor(pos.y / h);
+    int truz = floor(pos.z / t);
+    // unique is x + y * max_x + z * max_x * max_y
+    return trux + truy * num_width_points + truz * num_width_points * num_height_points;
 }
 
 ///////////////////////////////////////////////////////

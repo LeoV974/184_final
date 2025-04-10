@@ -11,7 +11,7 @@ void Sphere::collide(PointMass &pm) {
   // TODO (Part 3): Handle collisions with spheres.
 	Vector3D dir = pm.position - this->origin;
 	if (dir.norm2() < this->radius2) {
-		dir = dir.unit();
+		dir.normalize();
 		Vector3D tang = dir * this->radius + this->origin;
 		Vector3D corr = tang - pm.last_position;
 		pm.position = (1 - this->friction) * corr + pm.last_position;
