@@ -6,8 +6,8 @@ uniform vec3 u_light_intensity;
 
 uniform vec4 u_color;
 
-uniform sampler2D u_texture_2;
-uniform vec2 u_texture_2_size;
+uniform sampler2D u_texture_1;
+uniform vec2 u_texture_1_size;
 
 uniform float u_normal_scaling;
 uniform float u_height_scaling;
@@ -21,7 +21,7 @@ out vec4 out_color;
 
 float h(vec2 uv) {
   // You may want to use this helper function...
-   return texture(u_texture_2, uv).r;
+   return texture(u_texture_1, uv).r;
 }
 
 void main() {
@@ -31,8 +31,8 @@ void main() {
   vec3 t = normalize(v_tangent.xyz);
   vec3 b = cross(n,t);
   mat3 TBN = mat3(t,b,n);
-  float w = u_texture_2_size[0];
-  float h = u_texture_2_size[1];
+  float w = u_texture_1_size[0];
+  float h = u_texture_1_size[1];
   // u + 1/w, v
   float dU = (h(v_uv + vec2(1.0/w , 0.0)) - h(v_uv)) * u_height_scaling * u_normal_scaling;
   // u, v + 1/h

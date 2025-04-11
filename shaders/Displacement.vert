@@ -3,8 +3,8 @@
 uniform mat4 u_view_projection;
 uniform mat4 u_model;
 
-uniform sampler2D u_texture_2;
-uniform vec2 u_texture_2_size;
+uniform sampler2D u_texture_1;
+uniform vec2 u_texture_1_size;
 
 uniform float u_normal_scaling;
 uniform float u_height_scaling;
@@ -20,7 +20,7 @@ out vec2 v_uv;
 out vec4 v_tangent;
 
 float h(vec2 uv) {
-  return texture(u_texture_2, uv).r;
+  return texture(u_texture_1, uv).r;
 }
 
 void main() {

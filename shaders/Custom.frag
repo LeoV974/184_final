@@ -19,6 +19,8 @@ uniform sampler2D u_texture_2;
 uniform sampler2D u_texture_3;
 uniform sampler2D u_texture_4;
 
+uniform vec4 u_color;
+
 // Environment map! Take a look at GLSL documentation to see how to
 // sample from this.
 uniform samplerCube u_texture_cubemap;
@@ -30,8 +32,21 @@ in vec2 v_uv;
 
 out vec4 out_color;
 
+
 void main() {
-  // Your awesome shader here!
-  out_color = (vec4(1, 1, 1, 0) + v_normal) / 2;
+  vec3 n = normalize(v_normal.xyz);
+  vec3 light_dir = normalize(u_light_pos - v_position.xyz);
+  float diffuse = max(dot(n, light_dir), 0.0);
+  
+  // Toon shading: quantize the diffuse intensity into discrete steps.
+  // Here we choose 4 levels
+  float levels = 4.0;
+  float toonDiffuse = floor(diffuse * levels) / levels;
+  // Add a small ambient component so that shadows are not completely dark.
+  vec3 ambient = vec3(0.1);
+  vec3 lighting = ambient + (u_light_intensity * toonDiffuse);
+  vec3 baseColor = u_color.rgb;
+  vec3 finalColor = baseColor * lighting;
+  out_color = vec4(finalColor, 1.0);
   out_color.a = 1;
 }
