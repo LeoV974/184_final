@@ -27,6 +27,8 @@ struct Spring {
 
   PointMass *pm_a;
   PointMass *pm_b;
+  float springCoef;
+  float damperCoef;
 }; // struct Spring
 }
 #endif /* SPRING_H */

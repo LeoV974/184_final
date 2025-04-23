@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 2.8)
 # Cloth simulation source
 set(CLOTHSIM_VIEWER_SOURCE
     # Cloth simulation objects
-    cloth.cpp
-    clothMesh.cpp
+    "jello.cpp"
+    
 
     # Collision objects
     collision/sphere.cpp
@@ -12,7 +12,7 @@ set(CLOTHSIM_VIEWER_SOURCE
 
     # Application
     main.cpp
-    clothSimulator.cpp
+    "jelloSim.cpp"
 
     # Miscellaneous
     # png.cpp

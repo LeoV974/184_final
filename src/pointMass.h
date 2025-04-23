@@ -16,9 +16,9 @@ struct PointMass {
         last_position(position) {}
 
   Vector3D normal();
-  Vector3D velocity(double delta_t) {
-    return (position - last_position) / delta_t;
-  }
+  Vector3D velocity;
+
+  float mass = 1.0f;
 
   // static values
   bool pinned;
