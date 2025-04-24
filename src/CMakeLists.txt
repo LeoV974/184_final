@@ -7,12 +7,12 @@ set(CLOTHSIM_VIEWER_SOURCE
     
 
     # Collision objects
-    collision/sphere.cpp
-    collision/plane.cpp
+    
+    
 
     # Application
-    main.cpp
-    "jelloSim.cpp"
+    
+    
 
     # Miscellaneous
     # png.cpp
@@ -66,7 +66,7 @@ link_directories(
 #-------------------------------------------------------------------------------
 # Add executable
 #-------------------------------------------------------------------------------
-add_executable(clothsim ${CLOTHSIM_VIEWER_SOURCE})
+add_executable(clothsim ${CLOTHSIM_VIEWER_SOURCE}   "massSpring.h" "massSpring.cpp" "collider.cpp" "collider.h")
 
 target_link_libraries(clothsim
     CGL ${CGL_LIBRARIES}

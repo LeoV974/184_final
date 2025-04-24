@@ -4,9 +4,8 @@
 #include <vector>
 #include <unordered_map>
 
-#include "CGL/CGL.h"
+
 #include "CGL/misc.h"
-#include "collision/collisionObject.h"
 #include "pointMass.h"
 #include "spring.h"
 
@@ -35,7 +34,7 @@ public:
     // add gravity
     void addExternalForces(Vector3D& accel);
     void computeInternalForce();
-
+    std::vector<PointMass> point_masses;
 private:
     Vector3D init_pos;
     float kstruct;
@@ -49,7 +48,7 @@ private:
     int pointperface;  // number of particles at cube's face
     float cubeLength;
 
-    std::vector<PointMass> point_masses;
+    
     std::vector<Spring> springs;
 
     void initializePoint();
@@ -65,6 +64,6 @@ private:
     void initalizeSpringBending();
     void initalizeSpringStruct();
     void initializeSpringShear();
-    void initializeSpringShearLine(const int particleID, const int i, const int j, const int k);
-    void pushSpringLine(const int particleID, const int neighborID);
+    void initializeSpringShearLine(int idx, int i, int j, int k);
 };
+#endif /* JELLO_H */
